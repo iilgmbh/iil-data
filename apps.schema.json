@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iil.pet/schemas/apps.schema.json",
+  "title": "IIL apps.json — Konsument-Side-Schema",
+  "description": "Defensiver Schema-Vertrag für apps.json. Quelle: iilgmbh/iil-relaunch/main/apps.json. Konsument: iil.pet. Bricht Drift früh ab.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "required": ["name", "repo", "status"],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 80
+      },
+      "repo": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_-]{1,40}$",
+        "description": "Repo-Slug (klein, alphanumerisch+_-)"
+      },
+      "desc": {
+        "type": "string",
+        "maxLength": 280
+      },
+      "icon": {
+        "type": "string"
+      },
+      "color": {
+        "type": "object",
+        "properties": {
+          "bg": { "type": "string" },
+          "fg": { "type": "string" }
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "status": {
+        "type": "string",
+        "enum": ["live", "beta", "dev"]
+      },
+      "urls": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "URL pro Stage. null = nicht verfügbar (semantisch identisch zu 'fehlt').",
+        "properties": {
+          "prod":    { "type": ["string", "null"], "format": "uri" },
+          "staging": { "type": ["string", "null"], "format": "uri" },
+          "dev":     { "type": ["string", "null"], "format": "uri" }
+        }
+      }
+    },
+    "allOf": [
+      {
+        "if": { "properties": { "status": { "const": "live" } } },
+        "then": {
+          "required": ["urls"],
+          "properties": {
+            "urls": { "required": ["prod"] }
+          }
+        }
+      },
+      {
+        "if": { "properties": { "status": { "const": "beta" } } },
+        "then": {
+          "required": ["urls"],
+          "properties": {
+            "urls": {
+              "anyOf": [
+                { "required": ["staging"] },
+                { "required": ["dev"] }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "if": { "properties": { "status": { "const": "dev" } } },
+        "then": {
+          "required": ["urls"],
+          "properties": {
+            "urls": { "required": ["dev"] }
+          }
+        }
+      }
+    ]
+  }
+}

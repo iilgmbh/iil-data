@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iil.pet/schemas/klickdummies.schema.json",
+  "title": "IIL klickdummies.json — Cross-Repo-Klickdummy-Manifest",
+  "description": "Aggregat aller IIL-Hub-Klickdummys (eines pro Hub-Repo, ggf. mehrere). Auto-discoverbar via iilgmbh/iil-pet-portal/scripts/discover-klickdummies.py.",
+  "type": "object",
+  "required": ["_schema", "klickdummies"],
+  "properties": {
+    "_schema": {
+      "const": "iil-pet-portal:klickdummies@v1"
+    },
+    "_note": {
+      "type": "string"
+    },
+    "klickdummies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "repo", "class"],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]+$",
+            "description": "Eindeutige ID (kebab-case)"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "repo": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_/-]+$",
+            "description": "Repo-Slug oder org/repo"
+          },
+          "private": {
+            "type": "boolean",
+            "default": false
+          },
+          "class": {
+            "type": "string",
+            "enum": ["mock", "stub-demo", "story", "spec-demo"],
+            "description": "platform:ADR-211 I2-Pattern"
+          },
+          "spec_id": {
+            "type": "string"
+          },
+          "adr": {
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+:ADR-[0-9]+$",
+            "description": "platform:ADR-211 I4-Format"
+          },
+          "sunset_after": {
+            "type": "string",
+            "format": "date"
+          },
+          "screens": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "host": {
+            "type": ["string", "null"],
+            "format": "uri"
+          },
+          "local_run": {
+            "type": "string"
+          },
+          "ai_use_cases": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^U[0-9]+$" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}
