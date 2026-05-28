@@ -62,6 +62,10 @@
             "type": ["string", "null"],
             "format": "uri"
           },
+          "root_url": {
+            "type": ["string", "null"],
+            "description": "Relativer Pfad zur gehosteten KD-Einstiegsseite (z. B. /kd/<repo>/sitemap/ oder /kd/<repo>/x.html); vom Portal-index.html als 'Öffnen'-Link genutzt. Kein voller URI (daher kein format:uri)."
+          },
           "local_run": {
             "type": "string"
           },
