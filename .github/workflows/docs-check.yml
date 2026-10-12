@@ -1,0 +1,46 @@
+# ============================================================================
+# iil-data – Doku- und Schema-Check
+#
+# Läuft auf jedem Pull Request und jedem Push auf main, ohne Pfadfilter:
+# Jeder PR hat damit einen abgeschlossenen CI-Lauf, den das Merge-Gate liest.
+# Geprüft werden relative Links (offline, kein Flattern) und dass jede
+# *.schema.json ein gültiges JSON-Schema gegen ihr Metaschema ist.
+# ============================================================================
+
+name: Doku prüfen
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    name: Relative Links
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v7
+
+      - name: Relative Links prüfen
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2
+        with:
+          args: --offline --no-progress './**/*.md'
+          fail: true
+          failIfEmpty: true
+
+  schemas:
+    name: JSON-Schemata
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v7
+
+      - name: Schemata gegen Metaschema prüfen
+        run: pipx run check-jsonschema==0.29.4 --check-metaschema *.schema.json
